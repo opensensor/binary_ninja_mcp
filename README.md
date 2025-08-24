@@ -95,7 +95,7 @@ On other operating systems or to manually configure the Claude Desktop integrati
     "binary_ninja_mcp": {
       "command": "/ABSOLUTE/PATH/TO/binary_ninja_mcp/.venv/bin/python",
       "args": [
-        "/ABSOLUTE/PATH/TO/binary_ninja_mcp/bridge/binja_mcp_bridge.py"
+        "/ABSOLUTE/PATH/TO/binary_ninja_mcp/bridge/bn_mcp_bridge_stdio.py"
       ]
     }
   }
