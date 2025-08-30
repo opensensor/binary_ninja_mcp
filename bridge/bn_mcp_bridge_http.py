@@ -244,7 +244,7 @@ def get_binary_status():
 # ──────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("Starting Binary Ninja MCP SSE Server (synchronous)...")
-    print("SSE URL: http://localhost:8000/sse")
+    print("SSE URL: http://localhost:8010/sse")
 
     # Test connection on startup
     try:
@@ -258,4 +258,4 @@ if __name__ == "__main__":
         logger.error(f"✗ Failed to connect to Binary Ninja bridge: {e}")
         logger.info("Server will start anyway - connection will be retried on first request")
 
-    mcp.run(transport="sse", host="0.0.0.0", port=8000)
+    mcp.run(transport="sse", host="0.0.0.0", port=8010)
