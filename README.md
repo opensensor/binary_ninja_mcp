@@ -5,7 +5,9 @@ This repository contains a Binary Ninja plugin, MCP server, and bridge that enab
 ## Features
 
 - Seamless, real-time integration between Binary Ninja and MCP clients
+- **Multi-binary support**: Analyze multiple binaries simultaneously with automatic routing
 - Enhanced reverse engineering workflow with AI assistance
+- Binary selection and comparative analysis capabilities
 - Primary support for Claude Desktop as the MCP client, but extensible for other integrations
 
 ## Examples
@@ -22,8 +24,19 @@ This repository contains a Binary Ninja plugin, MCP server, and bridge that enab
 
 This repository contains two separate components:
 
-1. A Binary Ninja plugin that provides an MCP server that exposes Binary Ninja's capabilities through HTTP endpoints.  This can be used with any client that implements the MCP protocol.
-2. A separate MCP bridge component that connects your favorite MCP client to the Binary Ninja MCP server.  While Claude Desktop is the primary integration path, the MCP server can be used with other clients.
+1. A Binary Ninja plugin that provides MCP servers that expose Binary Ninja's capabilities through HTTP endpoints. **Now supports multiple binaries simultaneously** with automatic port allocation and server management.
+2. A separate MCP bridge component that connects your favorite MCP client to the Binary Ninja MCP servers. **Enhanced with routing capabilities** to work with multiple binaries and automatic server discovery.
+
+## Multi-Binary Support
+
+The enhanced system now supports analyzing multiple binaries simultaneously:
+
+- **Multiple Servers**: Each binary gets its own MCP server on a unique port (9009, 9010, 9011, etc.)
+- **Automatic Discovery**: The bridge automatically discovers all running Binary Ninja servers
+- **Binary Selection**: Use `binary_id` parameters in MCP tools to select which binary to analyze
+- **Comparative Analysis**: Analyze and compare multiple binaries in the same session
+
+For detailed setup instructions, see [MULTI_BINARY_SETUP.md](MULTI_BINARY_SETUP.md).
 
 ## Supported Integrations
 
@@ -89,6 +102,7 @@ On other operating systems or to manually configure the Claude Desktop integrati
 1. Navigate to `Settings > Developer > Edit Config`
 2. Add the following configuration:
 
+### Single Binary (Legacy)
 ```json
 {
   "mcpServers": {
@@ -100,6 +114,21 @@ On other operating systems or to manually configure the Claude Desktop integrati
     }
   }
 }
+```
+
+### Multi-Binary (Recommended)
+```json
+{
+  "mcpServers": {
+    "binary_ninja_multi_mcp": {
+      "command": "/ABSOLUTE/PATH/TO/binary_ninja_mcp/.venv/bin/python",
+      "args": [
+        "/ABSOLUTE/PATH/TO/binary_ninja_mcp/bridge/bn_mcp_bridge_multi_http.py"
+      ]
+    }
+  }
+}
+```
 ```
 
 Note: Replace `/ABSOLUTE/PATH/TO` with the actual absolute path to your project directory. The virtual environment's Python interpreter must be used to access the installed dependencies.
