@@ -123,6 +123,23 @@ class MCPRequestHandler(BaseHTTPRequestHandler):
                     else None,
                 }
                 self._send_json_response(status)
+            elif path == "/binary/info":
+                # Enhanced binary information for multi-binary support
+                if self.binary_ops and self.binary_ops.current_view:
+                    bv = self.binary_ops.current_view
+                    info = {
+                        "loaded": True,
+                        "filename": bv.file.filename,
+                        "basename": bv.file.filename.split("/")[-1] if bv.file.filename else "unknown",
+                        "arch": str(bv.arch) if bv.arch else "unknown",
+                        "platform": str(bv.platform) if bv.platform else "unknown",
+                        "entry_point": hex(bv.entry_point) if hasattr(bv, 'entry_point') else None,
+                        "length": bv.length if hasattr(bv, 'length') else 0,
+                        "function_count": len(bv.functions) if hasattr(bv, 'functions') else 0,
+                    }
+                else:
+                    info = {"loaded": False}
+                self._send_json_response(info)
 
             elif path == "/functions" or path == "/methods":
                 functions = self.binary_ops.get_function_names(offset, limit)
