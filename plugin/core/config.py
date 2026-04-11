@@ -24,7 +24,7 @@ class MultiBinaryServerConfig:
 
 @dataclass
 class BinaryNinjaConfig:
-    api_version: Optional[str] = None
+    api_version: str | None = None
     log_level: str = "INFO"
 
 
