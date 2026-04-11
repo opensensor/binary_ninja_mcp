@@ -113,7 +113,11 @@ class BinaryOperations:
 
     def _register_view(self, bv: bn.BinaryView) -> str:
         """Add a view to the managed list if not present, return its id."""
-        self._prune_views()
+        # NOTE: do NOT call _prune_views() before registering bv. _prune_views
+        # will clear self._current_view if current_view is not present in
+        # _views_by_id, and at this point bv has not been added yet — even
+        # though the caller (typically the current_view setter) has just
+        # assigned it. Register bv first, then prune.
         # Reuse existing id if the exact object is already tracked
         for vid, w in list(self._views_by_id.items()):
             try:
@@ -121,6 +125,7 @@ class BinaryOperations:
             except Exception:
                 vb = None
             if vb is bv:
+                self._prune_views()
                 return vid
         # Prefer deduplication by canonical filename
         fn = None
@@ -134,13 +139,16 @@ class BinaryOperations:
             if existing_id and existing_id in self._views_by_id:
                 # Always store weak references so closed views can be pruned
                 self._views_by_id[existing_id] = weakref.ref(bv)
+                self._prune_views()
                 return existing_id
-        # Assign a new id
+        # Assign a new id and add the entry BEFORE pruning so the prune step
+        # observes bv as alive and does not clear self._current_view.
         vid = str(self._next_view_id)
         self._next_view_id += 1
         self._views_by_id[vid] = weakref.ref(bv)
         if fn:
             self._id_by_filename[fn] = vid
+        self._prune_views()
         return vid
 
     def register_view(self, bv: bn.BinaryView) -> str:
