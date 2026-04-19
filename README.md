@@ -1,6 +1,8 @@
-# Binary Ninja MCP <img src="images/binja.png" height="24" style="margin-left: 5px; vertical-align: middle;">
+# Binary Ninja MCP
 
 This repository contains a Binary Ninja plugin, MCP server, and bridge that enables seamless integration of Binary Ninja's capabilities with your favorite LLM client.
+
+![Binary Ninja MCP Logo](images/logo-small.png)
 
 ## Features
 
@@ -8,17 +10,14 @@ This repository contains a Binary Ninja plugin, MCP server, and bridge that enab
 - **Multi-binary support**: Analyze multiple binaries simultaneously with automatic routing
 - Enhanced reverse engineering workflow with AI assistance
 - Binary selection and comparative analysis capabilities
-- Primary support for Claude Desktop as the MCP client, but extensible for other integrations
+- Support for every MCP client (Cline, Claude desktop, Roo Code, etc.)
+- Open multiple binaries and switch the active target automatically
 
 ## Examples
 
-### Generating a Binary Analysis Report
+### Solving a CTF Challenge
 
-![Binary Analysis Report Generation](images/mcp-demo-report.png)
-
-### Renaming Functions
-
-![Rename Function Demo](images/mcp-demo-rename.gif)
+Check out [this demo video on YouTube](https://www.youtube.com/watch?v=0ffMHH39L_M) that uses the extension to solve a CTF challenge.
 
 ## Components
 
@@ -38,71 +37,91 @@ The enhanced system now supports analyzing multiple binaries simultaneously:
 
 For detailed setup instructions, see [MULTI_BINARY_SETUP.md](MULTI_BINARY_SETUP.md).
 
-## Supported Integrations
-
-The following table details which integrations with Binary Ninja are currently supported.
-
-| Function | Description |
-|----------|-------------|
-| `get_binary_status` | Get the current status of the loaded binary. |
-| `list_classes` | List all namespace/class names in the program. |
-| `list_data_items` | List defined data labels and their values. |
-| `list_exports` | List exported functions/symbols. |
-| `list_imports` | List imported symbols in the program. |
-| `list_methods` | List all function names in the program. |
-| `list_namespaces` | List all non-global namespaces in the program. |
-| `list_segments` | List all memory segments in the program. |
-| `rename_data` | Rename a data label at the specified address. |
-| `rename_function` | Rename a function by its current name to a new user-defined name. |
-| `search_functions_by_name` | Search for functions whose name contains the given substring. |
-| `decompile_function` | Decompile a specific function by name and return the decompiled C code. |
-
 ## Prerequisites
 
 - [Binary Ninja](https://binary.ninja/)
 - Python 3.12+
-- [Claude Desktop](https://claude.ai/download) (or your preferred integration)
+- MCP client (those with auto-setup support are listed below)
 
 ## Installation
 
-### Binary Ninja Plugin
+### MCP Client
 
-You may install the plugin through Binary Ninja's Plugin Manager (`Plugins > Manage Plugins`).
+Please install the MCP client before you install Binary Ninja MCP so that the MCP clients can be auto-setup. We currently support auto-setup for these MCP clients:
 
-![Plugin Manager Listing](images/plugin-manager-listing.png)
+    1. Cline (recommended)
+    2. Roo Code
+    3. Claude Desktop (recommended)
+    4. Cursor
+    5. Windsurf
+    6. Claude Code
+    7. LM Studio
 
-To manually configure the plugin, this repository can be copied into the Binary Ninja plugins folder.
+### Extension Installation
 
-### Claude Desktop Bridge (Optional)
+After the MCP client is installed, you can install the MCP server using the Binary Ninja Plugin Manager or manually. Both methods support auto-setup of MCP clients.
 
-This is only needed if you want to use Claude Desktop as your MCP client.  Make sure that you have your virtual environment configured first:
+If your MCP client is not set, you should install it first then try to reinstall the extension.
+
+#### Binary Ninja Plugin Manager
+
+You may install the extension through Binary Ninja's Plugin Manager (`Plugins > Manage Plugins`).
+
+![Plugin Manager](images/plugin-manager-listing.png)
+
+#### Manual Install
+
+To manually install the extension, this repository can be copied into the [Binary Ninja plugins folder](https://docs.binary.ninja/guide/plugins.html).
+
+### [Optional] Manual Setup of the MCP Client
+
+*You do NOT need to set this up manually if you use a supported MCP client and follow the installation steps before.*
+
+You can also manage MCP client entries from the command line:
 
 ```bash
-git clone git@github.com:fosdickio/binary_ninja_mcp.git
-cd binary_ninja_mcp
-
-python3 -m venv .venv
-source .venv/bin/activate   # On macOS/Linux
-
-pip install -r bridge/requirements.txt
+python scripts/mcp_client_installer.py --install    # auto setup supported MCP clients
+python scripts/mcp_client_installer.py --uninstall  # remove entries and delete `.mcp_auto_setup_done`
+python scripts/mcp_client_installer.py --config     # print a generic JSON config snippet
 ```
 
-#### Automated Configuration (Mac)
+#### Using npm package (Recommended)
 
-On a Mac, you can automate the setup by running:
+The recommended way to set up the MCP client is using the official npm package:
 
 ```bash
-./scripts/setup_claude_desktop.py
+npx -y binary-ninja-mcp
 ```
 
-#### Manual Configuration
+For MCP clients, use this configuration:
 
-On other operating systems or to manually configure the Claude Desktop integration:
+### Single Binary (Legacy) — npm
+```json
+{
+  "mcpServers": {
+    "binary-ninja-mcp": {
+      "command": "npx",
+      "args": ["-y", "binary-ninja-mcp", "--host", "localhost", "--port", "9009"]
+    }
+  }
+}
+```
 
-1. Navigate to `Settings > Developer > Edit Config`
-2. Add the following configuration:
+Or if installed globally:
 
 ### Single Binary (Legacy)
+```json
+{
+  "mcpServers": {
+    "binary-ninja-mcp": {
+      "command": "binary-ninja-mcp",
+      "args": ["--host", "localhost", "--port", "9009"]
+    }
+  }
+}
+```
+
+### Single Binary (Legacy) — Python bridge
 ```json
 {
   "mcpServers": {
@@ -129,46 +148,178 @@ On other operating systems or to manually configure the Claude Desktop integrati
   }
 }
 ```
+<<<<<<< HEAD
 ```
+=======
+>>>>>>> 9d82f55cac82d7da671bf500ac83f3365629fbd7
 
 Note: Replace `/ABSOLUTE/PATH/TO` with the actual absolute path to your project directory. The virtual environment's Python interpreter must be used to access the installed dependencies.
 
 ## Usage
 
-### Claude Desktop
+1. Open Binary Ninja and load a binary
+2. Click the button shown at left bottom corner
+3. Start using it through your MCP client
 
-1. Open Binary Ninja and install the `Binary Ninja MCP` plugin
-2. Restart Binary Ninja and then open a binary
-3. Start the MCP server (`Plugins > MCP Server > Start MCP Server`)
-4. Launch Claude Desktop
+You may now start prompting LLMs about the currently open binary (or binaries). Example prompts:
 
-The integration will be automatically available after you open Claude Desktop.
+### CTF Challenges
 
-![Claude Integration](images/claude-desktop-integration.png)
+```txt
+You're the best CTF player in the world. Please solve this reversing CTF challenge in the <folder_name> folder using Binary Ninja. Rename ALL the function and the variables during your analyzation process (except for main function) so I can better read the code. Write a python solve script if you need. Also, if you need to create struct or anything, please go ahead. Reverse the code like a human reverser so that I can read the decompiled code that analyzed by you.
+```
 
-You may now start prompting Claude about the currently open binary.  Example prompts:
+### Malware Analysis
 
-- "Generate a binary analysis report for the current binary."
-- "Rename function X to Y in the current binary."
-- "List all functions in the current binary."
-- "What is the status of the loaded binary?"
+```txt
+Your task is to analyze an unknown file which is currently open in Binary Ninja. You can use the existing MCP server called "binary_ninja_mcp" to interact with the Binary Ninja instance and retrieve information, using the tools made available by this server. In general use the following strategy:
 
-### Other MCP Client Integrations
+- Start from the entry point of the code
+- If this function call others, make sure to follow through the calls and analyze these functions as well to understand their context
+- If more details are necessary, disassemble or decompile the function and add comments with your findings
+- Inspect the decompilation and add comments with your findings to important areas of code
+- Add a comment to each function with a brief summary of what it does
+- Rename variables and function parameters to more sensible names
+- Change the variable and argument types if necessary (especially pointer and array types)
+- Change function names to be more descriptive, using mcp_ as prefix.
+- NEVER convert number bases yourself. Use the convert_number MCP tool if needed!
+- When you finish your analysis, report how long the analysis took
+- At the end, create a report with your findings.
+- Based only on these findings, make an assessment on whether the file is malicious or not.
+```
 
-The bridge can be used with other MCP clients by implementing the appropriate integration layer.
+## Supported Capabilities
+
+The following table lists the available MCP functions for use:
+
+| Function                                                             | Description                                                                                                  |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `decompile_function`                                                 | Decompile a specific function by name and return HLIL-like code with addresses.                              |
+| `get_il(name_or_address, view, ssa)`                                 | Get IL for a function in `hlil`, `mlil`, or `llil` (SSA supported for MLIL/LLIL).                            |
+| `define_types`                                                       | Add type definitions from a C string type definition.                                                        |
+| `delete_comment`                                                     | Delete the comment at a specific address.                                                                    |
+| `delete_function_comment`                                            | Delete the comment for a function.                                                                           |
+| `declare_c_type(c_declaration)`                                      | Create/update a local type from a single C declaration.                                                      |
+| `format_value(address, text, size)`                                  | Convert a value and annotate it at an address in BN (adds a comment).                                        |
+| `function_at`                                                        | Retrieve the name of the function the address belongs to.                                                    |
+| `fetch_disassembly`                                              | Get the assembly representation of a function by name or address.                                            |
+| `get_entry_points()`                                                 | List entry point(s) of the loaded binary.                                                                    |
+| `get_binary_status`                                                  | Get the current status of the loaded binary.                                                                 |
+| `get_comment`                                                        | Get the comment at a specific address.                                                                       |
+| `get_function_comment`                                               | Get the comment for a function.                                                                              |
+| `get_user_defined_type`                                              | Retrieve definition of a user-defined type (struct, enumeration, typedef, union).                            |
+| `get_xrefs_to(address)`                                              | Get all cross references (code and data) to an address.                                                      |
+| `get_data_decl(name_or_address, length)`                             | Return a C-like declaration and a hexdump for a data symbol or address.                                      |
+| `hexdump_address(address, length)`                                   | Text hexdump at address. `length < 0` reads exact defined size if available.                                 |
+| `hexdump_data(name_or_address, length)`                              | Hexdump by data symbol name or address. `length < 0` reads exact defined size if available.                  |
+| `get_xrefs_to_enum(enum_name)`                                       | Get usages related to an enum (matches member constants in code).                                            |
+| `get_xrefs_to_field(struct_name, field_name)`                        | Get all cross references to a named struct field.                                                            |
+| `get_xrefs_to_struct(struct_name)`                                   | Get xrefs/usages related to a struct (members, globals, code refs).                                          |
+| `get_xrefs_to_type(type_name)`                                       | Get xrefs/usages related to a struct/type (globals, refs, HLIL matches).                                     |
+| `get_xrefs_to_union(union_name)`                                     | Get xrefs/usages related to a union (members, globals, code refs).                                           |
+| `get_stack_frame_vars(function_identifier)`                          | Get stack frame variable information for a function (names, offsets, sizes, types).                           |
+| `get_type_info(type_name)`                                           | Resolve a type and return declaration, kind, and members.                                                    |
+| `get_callers(identifiers)`                                           | List callers plus call sites for one or more function identifiers.                                           |
+| `get_callees(identifiers)`                                           | List callees plus call sites for one or more function identifiers.                                           |
+| `make_function_at(address, platform)`                                | Create a function at an address. `platform` optional; use `default` to pick the BinaryView/platform default. |
+| `list_platforms()`                                                   | List all available platform names.                                                                           |
+| `list_binaries()`                                                    | List managed/open binaries with ids and active flag.                                                         |
+| `select_binary(view)`                                                | Select active binary by id or filename.                                                                      |
+| `list_all_strings()`                                                 | List all strings (no pagination; aggregates all pages).                                                      |
+| `list_classes`                                                       | List all namespace/class names in the program.                                                               |
+| `list_data_items`                                                    | List defined data labels and their values.                                                                   |
+| `list_exports`                                                       | List exported functions/symbols.                                                                             |
+| `list_imports`                                                       | List imported symbols in the program.                                                                        |
+| `list_local_types(offset, count)`                                    | List local Types in the current database (name/kind/decl).                                                   |
+| `list_methods`                                                       | List all function names in the program.                                                                      |
+| `list_namespaces`                                                    | List all non-global namespaces in the program.                                                               |
+| `list_segments`                                                      | List all memory segments in the program.                                                                     |
+| `list_strings(offset, count)`                                        | List all strings in the database (paginated).                                                                |
+| `list_strings_filter(offset, count, filter)`                         | List matching strings (paginated, filtered by substring).                                                    |
+| `rename_data`                                                        | Rename a data label at the specified address.                                                                |
+| `rename_function`                                                    | Rename a function by its current name to a new user-defined name.                                            |
+| `rename_single_variable`                                             | Rename a single local variable inside a function.                                                            |
+| `rename_multi_variables`                                             | Batch rename multiple local variables in a function (mapping or pairs).                                      |
+| `set_local_variable_type(function_address, variable_name, new_type)` | Set a local variable's type.                                                                                 |
+| `retype_variable`                                                    | Retype variable inside a given function.                                                                     |
+| `search_functions_by_name`                                           | Search for functions whose name contains the given substring.                                                |
+| `search_types(query, offset, count)`                                 | Search local Types by substring (name/decl).                                                                 |
+| `set_comment`                                                        | Set a comment at a specific address.                                                                         |
+| `set_function_comment`                                               | Set a comment for a function.                                                                                |
+| `set_function_prototype(name_or_address, prototype)`                 | Set a function's prototype by name or address.                                                               |
+| `patch_bytes(address, data, save_to_file)`                           | Patch raw bytes at an address (byte-level, not assembly). Can patch entire instructions by providing their bytecode. Address: hex (e.g., "0x401000") or decimal. Data: hex string (e.g., "90 90"). `save_to_file` (default True) saves to disk and re-signs on macOS. |
+
+These are the list of HTTP endpoints that can be called:
+
+- `/allStrings`: All strings in one response.
+- `/formatValue?address=<addr>&text=<value>&size=<n>`: Convert and set a comment at an address.
+- `/getXrefsTo?address=<addr>`: Xrefs to address (code+data).
+- `/getDataDecl?name=<symbol>|address=<addr>&length=<n>`: JSON with declaration-style string and a hexdump for a data symbol or address. Keys: `address`, `name`, `size`, `type`, `decl`, `hexdump`. `length < 0` reads exact defined size if available.
+- `/hexdump?address=<addr>&length=<n>`: Text hexdump aligned at address; `length < 0` reads exact defined size if available.
+- `/hexdumpByName?name=<symbol>&length=<n>`: Text hexdump by symbol name. Recognizes BN auto-labels like `data_<hex>`, `byte_<hex>`, `word_<hex>`, `dword_<hex>`, `qword_<hex>`, `off_<hex>`, `unk_<hex>`, and plain hex addresses.
+- `/makeFunctionAt?address=<addr>&platform=<name|default>`: Create a function at an address (idempotent if already exists). `platform=default` uses the BinaryView/platform default.
+- `/platforms`: List all available platform names.
+- `/binaries` or `/views`: List managed/open binaries with ids and active flag.
+- `/selectBinary?view=<id|filename>`: Select active binary for subsequent operations.
+- `/data?offset=<n>&limit=<m>&length=<n>`: Defined data items with previews. `length` controls bytes read per item (capped at defined size). Default behavior reads exact defined size when available; `length=-1` forces exact-size.
+- `/getXrefsToEnum?name=<enum>`: Enum usages by matching member constants.
+- `/getXrefsToField?struct=<name>&field=<name>`: Xrefs to struct field.
+- `/getXrefsToType?name=<type>`: Xrefs/usages related to a struct/type name.
+- `/getTypeInfo?name=<type>`: Resolve a type and return declaration and details.
+- `/getXrefsToUnion?name=<union>`: Union xrefs/usages (members, globals, refs).
+- `/getStackFrameVars?name=<function>|address=<addr>`: Get stack frame variable information for a function.
+- `/getCallers?identifiers=<name|addr>[,...]`: Return caller summaries (functions, call sites, HLIL/IL snippets) for one or more identifiers. Accepts `identifiers`, `identifier`, `names`, or `addresses` query params.
+- `/getCallees?identifiers=<name|addr>[,...]`: Return callee summaries with the same schema as `/getCallers`, detailing every outgoing call target per request identifier.
+- `/localTypes?offset=<n>&limit=<m>`: List local types.
+- `/strings?offset=<n>&limit=<m>`: Paginated strings.
+- `/strings/filter?offset=<n>&limit=<m>&filter=<substr>`: Filtered strings.
+- `/searchTypes?query=<substr>&offset=<n>&limit=<m>`: Search local types by substring.
+- `/patch` or `/patchBytes?address=<addr>&data=<hex>&save_to_file=<bool>`: Patch raw bytes at an address (byte-level, not assembly). Can patch entire instructions by providing their bytecode. Address: hex (e.g., "0x401000") or decimal. Data: hex string (e.g., "90 90"). `save_to_file` (default True) saves to disk and re-signs on macOS.
+- `/renameVariables`: Batch rename locals in a function. Parameters:
+  - Function: one of `functionAddress`, `address`, `function`, `functionName`, or `name`.
+  - Provide renames via one of:
+    - `renames`: JSON array of `{old, new}` objects
+    - `mapping`: JSON object of `old->new`
+    - `pairs`: compact string `old1:new1,old2:new2`
+          Returns per-item results plus totals. Order is respected; later pairs can refer to earlier new names.
 
 ## Development
 
-The project structure is organized as follows:
+### Code Quality
 
+This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting. Configuration is in `ruff.toml`.
+
+#### Running Ruff Manually
+
+Check for issues:
+```bash
+ruff check .
 ```
-binary_ninja_mcp/
-├── bridge/                      # MCP client integration
-├── plugin/                      # Binary Ninja plugin
-├── scripts/
-│   └── setup_claude_desktop.py  # Setup script for Claude Desktop
+
+Auto-fix issues:
+```bash
+ruff check --fix .
 ```
+
+Check formatting issues:
+```bash
+ruff format --check .
+```
+
+Format code:
+```bash
+ruff format .
+```
+
+#### GitHub Actions
+
+A GitHub Action workflow (`.github/workflows/lint-format.yml`) automatically runs Ruff on:
+
+- Every push to the `main` branch
+- Every pull request targeting the `main` branch
+
+The workflow will fail if there are linting errors or formatting issues, ensuring code quality in CI.
+
 ## Contributing
 
 Contributions are welcome. Please feel free to submit a pull request.
-

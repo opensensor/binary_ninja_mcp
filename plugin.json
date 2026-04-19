@@ -1,32 +1,21 @@
 {
     "pluginmetadataversion": 2,
     "name": "Binary Ninja MCP",
-    "author": "fosdick.io",
-    "type": [
-        "core",
-        "binaryview",
-        "architecture",
-        "helper"
-    ],
-    "api": [
-        "python3"
-    ],
-    "description": "A Binary Ninja plugin that provides a MCP (Model Context Protocol) server with HTTP endpoints for LLM integration.",
-    "longdescription": "# Binary Ninja MCP\n\nThis repository contains a Binary Ninja plugin, MCP server, and bridge that enables seamless integration of Binary Ninja's capabilities with your favorite LLM client.\n\n![Generating a Binary Analysis Report](https://github.com/fosdickio/binary_ninja_mcp/raw/main/images/mcp-demo-report.png)\n\n## Features\n- Seamless, real-time integration between Binary Ninja and MCP clients\n- Enhanced reverse engineering workflow with AI assistance\n- Primary support for Claude Desktop as the MCP client, but extensible for other integrations\n\nVisit https://github.com/fosdickio/binary_ninja_mcp for usage instructions and more information.",
+    "author": "fosdickio, CX330Blake",
+    "type": ["core", "binaryview", "architecture", "helper"],
+    "api": ["python3"],
+    "description": "A Binary Ninja extension that provides a MCP (Model Context Protocol) server with HTTP endpoints for LLM integration.",
+    "longdescription": "",
     "license": {
         "name": "GPL-3.0",
-        "text": "Copyright 2025 fosdick.io\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>."
+        "text": "Copyright 2025 fosdickio, CX330Blake\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>."
     },
-    "platforms": [
-        "Darwin",
-        "Windows",
-        "Linux"
-    ],
+    "platforms": ["Darwin", "Windows", "Linux"],
     "installinstructions": {
         "Darwin": "See https://github.com/fosdickio/binary_ninja_mcp",
         "Windows": "See https://github.com/fosdickio/binary_ninja_mcp",
         "Linux": "See https://github.com/fosdickio/binary_ninja_mcp"
     },
-    "version": "0.2.1",
+    "version": "1.1.0",
     "minimumbinaryninjaversion": 4000
 }
